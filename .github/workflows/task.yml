@@ -1,0 +1,23 @@
+name: Scheduled task
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7,17,27,37,47,57 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: scheduled-task
+  cancel-in-progress: false
+jobs:
+  task:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Run task
+        env:
+          BUNDLE_KEYS: ${{ secrets.BUNDLE_KEYS }}
+          GOOGLE_DRIVE_AUTH_JSON: ${{ secrets.TASK_AUTH }}
+          GOOGLE_DRIVE_FILE_ID: ${{ secrets.OUTPUT_ID }}
+        run: python3 runner.py
